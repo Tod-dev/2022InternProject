@@ -1,0 +1,88 @@
+{
+	"info": {
+		"_postman_id": "97586b2f-93e5-4748-9031-dcfdd8c59e5d",
+		"name": "HolyArtTest",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "12782831"
+	},
+	"item": [
+		{
+			"name": "http://localhost:3001/pendingData",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3001/pendingData",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"pendingData"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:3001/data",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3001/data",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"data"
+					],
+					"query": [
+						{
+							"key": "from",
+							"value": "1659166770",
+							"disabled": true
+						},
+						{
+							"key": "limit",
+							"value": "1",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:3001/data/importDataFromFile",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"fileBase64\":  \"MyA1CjEgMTI4IC4uLiBkdW1teSBkYXRhIC4uLgo0IDY1IC4uLiBkdW1teSBkYXRhIC4uLgozIDAgcHJpbWEgcmlnYSB1dGlsZQo1IC0xNjUgc2Vjb25kYSByaWdhCjMgMCB0ZXJ6YSByaWdhCjUgLTE2NSAuLi4gZHVtbXkgZGF0YSAuLi4=\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3001/importDataFromFile",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3001",
+					"path": [
+						"importDataFromFile"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
