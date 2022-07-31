@@ -16,14 +16,15 @@ const express_1 = __importDefault(require("express"));
 const Dato_1 = require("./models/Dato");
 const cors = require("cors");
 const dotenv = require("dotenv");
-const cron = require('node-cron');
+const cron = require("node-cron");
 const files_controller = require("./controllers/files_controller");
+const index_1 = __importDefault(require("./db/index"));
 const app = (0, express_1.default)();
 dotenv.config();
 app.use(cors());
 app.use(express_1.default.json());
-app.post('/importDataFromFile', (req, res) => {
-    let message = 'POST importDataFromFile';
+app.post("/importDataFromFile", (req, res) => {
+    let message = "POST importDataFromFile";
     console.log(message);
     files_controller
         .setPendingData(req)
@@ -36,8 +37,8 @@ app.post('/importDataFromFile', (req, res) => {
         res.status(500).send(error);
     });
 });
-app.get('/pendingData', (req, res) => {
-    let message = 'GET pendingDa';
+app.get("/pendingData", (req, res) => {
+    let message = "GET pendingDa";
     console.log(message);
     files_controller
         .getPendingData()
@@ -50,8 +51,8 @@ app.get('/pendingData', (req, res) => {
         res.status(500).send(error);
     });
 });
-app.get('/data', (req, res) => {
-    let message = 'GET data';
+app.get("/data", (req, res) => {
+    let message = "GET data";
     console.log(message);
     files_controller
         .getDataProcessed(req)
@@ -68,16 +69,17 @@ const unknownEndpoint = (req, res) => {
     res.status(404).send({ error: "unknown endpoint" });
 };
 app.use(unknownEndpoint);
-var cronjob = cron.schedule('*/10 * * * * *', () => __awaiter(void 0, void 0, void 0, function* () {
+var cronjob = cron.schedule("*/10 * * * * *", () => __awaiter(void 0, void 0, void 0, function* () {
     console.log("Task is running every 10s -" + new Date());
     yield task();
 }), {
     scheduled: false,
 });
-app.listen(process.env.PORT || 3001, () => {
+app.listen(process.env.PORT || 3001, () => __awaiter(void 0, void 0, void 0, function* () {
     console.log("started");
+    yield index_1.default.runMigrations();
     cronjob.start();
-});
+}));
 const task = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
         let pendingdata = yield files_controller.getPendingData(15);

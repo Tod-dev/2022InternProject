@@ -33,6 +33,4 @@ fs.writeFileSync(path, content, (err) => {
     if (err) {
         console.error(err);
     }
-    // file written successfully
-    console.log("FINE");
 });

@@ -1,10 +1,21 @@
-import { count } from "console";
 import { Dato } from "../models/Dato";
-const db = require("../dbConn");
+import Database from "../db/index";
+let db: Database = new Database();
 
-exports.getPendingData = async (limit?:number) => {
+exports.test = async () => {
   try {
-    let limitQuery:string = limit ? `limit ${limit}` : '';
+    const { rows } = await db.query(`select 1 as test`, []);
+    //console.log(rows);
+    return rows;
+  } catch (error) {
+    //pass error to next()
+    throw error;
+  }
+};
+
+exports.getPendingData = async (limit?: number) => {
+  try {
+    let limitQuery: string = limit ? `limit ${limit}` : "";
     const { rows } = await db.query(
       `select * from datiDaProcessare order by P desc, dataora desc ${limitQuery}`,
       []
@@ -16,19 +27,24 @@ exports.getPendingData = async (limit?:number) => {
     throw error;
   }
 };
-exports.getDataProcessed= async (req:any) => {
+exports.getDataProcessed = async (req: any) => {
   try {
     let from = req.query.from;
     let limit = req.query.limit;
-    console.log("PARAMS:",from,limit)
-    if(!from || isNaN(from)) from ='';
-    if(!limit || isNaN(limit) || limit <=0) limit ='';
-    let fromQuery:string  = from  === '' ? '' : `where timestampDataOra >= ${from}`;
-    let limitQuery:string = limit === '' ? '' : 'limit '+limit;
+    console.log("PARAMS:", from, limit);
+    if (!from || isNaN(from)) from = "";
+    if (!limit || isNaN(limit) || limit <= 0) limit = "";
+    let fromQuery: string =
+      from === "" ? "" : `where timestampDataOra >= ${from}`;
+    let limitQuery: string = limit === "" ? "" : "limit " + limit;
+
     const { rows } = await db.query(
       `select k,d,timestampDataOra as dataora from datiProcessati  ${fromQuery} order by dataora desc ${limitQuery} `,
       []
     );
+
+    //const { rows } = await db.query(`select 'ciao' as id`, []);
+
     //console.log(rows);
     return rows;
   } catch (error) {
@@ -37,99 +53,93 @@ exports.getDataProcessed= async (req:any) => {
   }
 };
 
-exports.setPendingData = async (req:any) => {
+exports.setPendingData = async (req: any) => {
   const { fileBase64 } = req.body;
-  const lines:Array<Dato> = getDatiOfBase64File(fileBase64);
+  const lines: Array<Dato> = getDatiOfBase64File(fileBase64);
   try {
-    console.log('fileBase64:',fileBase64);
-    await db.query('BEGIN')
-    
+    console.log("fileBase64:", fileBase64);
+    await db.query("BEGIN", []);
+
     const rows = await insertDati(lines);
 
-    await db.query('COMMIT')
+    await db.query("COMMIT", []);
 
-    console.log("All Insert done! Rows affected:",rows);
+    console.log("All Insert done! Rows affected:", rows);
     return fileBase64;
   } catch (error) {
-      await db.query('ROLLBACK')
-      throw error;
+    await db.query("ROLLBACK", []);
+    throw error;
   }
-}
+};
 
-const insertDati = async (listaRighe:Array<Dato>)=> {
+const insertDati = async (listaRighe: Array<Dato>) => {
   let countRows = 0;
-  for(let i=0; i< listaRighe.length;i++){
-    const {priority:P,K,D} = listaRighe[i];
-    console.log("P:",P,"K:",K,"D:",D)
-    const {rows} = await db.query(
+  for (let i = 0; i < listaRighe.length; i++) {
+    const { priority: P, K, D } = listaRighe[i];
+    console.log("P:", P, "K:", K, "D:", D);
+    const { rows } = await db.query(
       `insert into datiDaProcessare(id,P,K,D,dataora) values (nextval('serialDatiDaProcessare'),$1,$2,$3,now())`,
-      [P,K,D]
+      [P, K, D]
     );
     countRows += rows;
   }
   return countRows;
 };
 
-
-
-exports.processaBlocco = async (listaRighe:Array<Dato> ) => {
+exports.processaBlocco = async (listaRighe: Array<Dato>) => {
   try {
-    await db.query('BEGIN')
+    await db.query("BEGIN", []);
 
-    await doElaborartion(listaRighe );
+    await doElaborartion(listaRighe);
 
-    await db.query('COMMIT')
+    await db.query("COMMIT", []);
   } catch (e) {
-    await db.query('ROLLBACK')
+    await db.query("ROLLBACK", []);
     throw e;
   }
-}
+};
 
-const doElaborartion = async (listaRighe:Array<Dato> )=> {
-  console.log('start');
+const doElaborartion = async (listaRighe: Array<Dato>) => {
+  console.log("start");
   let current = new Date();
-  for(let i=0; i< listaRighe.length;i++){
-    const dato:Dato =  listaRighe[i];    
+  for (let i = 0; i < listaRighe.length; i++) {
+    const dato: Dato = listaRighe[i];
 
     await db.query(
       `insert into datiProcessati(id,K,D,dataora) values ($1,$2,$3,$4)`,
-      [dato.id,dato.K,dato.D,current]
+      [dato.id, dato.K, dato.D, current]
     );
 
-    await db.query(
-      `delete from datiDaProcessare where id = $1`,
-      [dato.id]
-    );
+    await db.query(`delete from datiDaProcessare where id = $1`, [dato.id]);
   }
 
-  console.log('end');
-
+  console.log("end");
 };
 
-
-const getDatiOfBase64File = (fileBase64:string):Array<Dato> => {
-  const lineeFile:Array<Dato> = [];
-  const buff = Buffer.from(fileBase64, 'base64');
-  const text = buff.toString('utf8');
+const getDatiOfBase64File = (fileBase64: string): Array<Dato> => {
+  const lineeFile: Array<Dato> = [];
+  const buff = Buffer.from(fileBase64, "base64");
+  const text = buff.toString("utf8");
   console.log("FILE:", text);
-  const linee = text.split('\n');
+  const linee = text.split("\n");
   const intestazione = linee[0];
-  const [a,b] = intestazione.split(' ');
-  const A = (a as unknown as number);
-  const B = (b as unknown as number);     
-  console.log("A:",A,"B:",B);
-  for(let i=1; i<linee.length;i++){
-    if(i>=A && i<=B && linee[i] != ''){
-      let array = linee[i].split(' ');
-      let p= array[0], k = array[1];
+  const [a, b] = intestazione.split(" ");
+  const A = a as unknown as number;
+  const B = b as unknown as number;
+  console.log("A:", A, "B:", B);
+  for (let i = 1; i < linee.length; i++) {
+    if (i >= A && i <= B && linee[i] != "") {
+      let array = linee[i].split(" ");
+      let p = array[0],
+        k = array[1];
       array.shift();
       array.shift();
-      let d = array.join(' ');
-      let P:number = (p as unknown as number);
-      let K:number = (k as unknown as number);
-      let D:string = d;
+      let d = array.join(" ");
+      let P: number = p as unknown as number;
+      let K: number = k as unknown as number;
+      let D: string = d;
 
-      lineeFile.push(new Dato(P,K,D));
+      lineeFile.push(new Dato(P, K, D));
     }
   }
   return lineeFile;

@@ -1,8 +1,11 @@
 import React from "react";
 
 import StyledLink from "./StyledLink";
+import GlobalContext from "./context/globalContext";
 
 const Data = () => {
+  const { backendService } = React.useContext(GlobalContext);
+
   //from, limit
   const [from, setFrom] = React.useState("");
   const [limit, setLimit] = React.useState("");
@@ -24,7 +27,7 @@ const Data = () => {
       queryParams += `limit=${limit}`;
       containsParams = true;
     }
-    let url = `http://localhost:3001/data${containsParams ? queryParams : ""}`;
+    let url = `${backendService}/data${containsParams ? queryParams : ""}`;
     console.log("URL:", url);
     fetch(url, {
       method: "GET",

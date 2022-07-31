@@ -4,3 +4,46 @@ npx tsc --init #compilatore tss
 yarn build
 node src/index.js
 yarn add -D ts-node
+
+#docker
+Dockerfile #istruzioni per buildare l'image -> run -> container
+------------------------------------
+from node:latest
+
+COPY . .
+
+RUN yarn install
+
+CMD ts-node src/index.ts
+------------------------------------
+#build dell'immagine a partire dal dockerfile -> creazione immagine
+docker build -t marcotodaro/intern-holyart-backend:1 .
+
+#show images on local
+docker image ls
+
+#run image -> container
+docker run -p 8001:3001 marcotodaro/intern-holyart-backend:1 
+
+------------------------------------
+#DOCKER COMPOSE -> build image 
+
+docker compose -f docker-compose.dev.yml up
+
+#detach -> non apre il log
+docker compose -f docker-compose.dev.yml up -d
+
+#forzare il rebuild
+docker compose -f docker-compose.dev.yml up --build 
+
+#se usiamo il nome di default
+docker compose up --build
+
+#processi in esecuzione
+docker ps
+
+#aprire il cmd
+docker exec -it backend-api-1  sh
+
+#stop
+docker compose stop

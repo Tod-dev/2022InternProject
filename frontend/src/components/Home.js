@@ -2,8 +2,11 @@ import React, { useState } from "react";
 
 import StyledLink from "./StyledLink";
 
+import GlobalContext from "./context/globalContext";
+
 const Home = () => {
   const [fileBase64, setFileBase64] = useState(""); //C:\fakepath\TeseoTech.txt
+  const { backendService } = React.useContext(GlobalContext);
 
   const importFile = async (event) => {
     event.preventDefault();
@@ -13,7 +16,7 @@ const Home = () => {
     dataInBase64 = dataInBase64.split(",")[1];
     console.log("BASE64: ", dataInBase64);
     // creates entity
-    fetch("http://localhost:3001/importDataFromFile", {
+    fetch(`${backendService}/importDataFromFile`, {
       method: "POST",
       headers: {
         "content-type": "application/json",

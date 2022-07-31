@@ -1,0 +1,33 @@
+version: "3.8"
+
+services:
+  db:
+    image: postgres
+    restart: unless-stopped
+    volumes:
+      - db:/var/lib/postgresql/data
+      - ./init-database.sh:/docker-entrypoint-initdb.d/init-database.sh
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - 5432:5432
+
+  nodejs-service:
+    build:
+      context: ./backend
+      target: production
+    ports:
+      - 3001:3001
+    env_file:
+      - ./backend/.env
+    environment:
+      NODE_ENV: production
+    depends_on:
+      - db
+    links:
+      - db
+    volumes:
+      - './backend:/src'
+volumes:
+  db:
