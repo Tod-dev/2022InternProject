@@ -1,6 +1,12 @@
 # Intern Project
 
-## start containers: docker compose up
+## start containers:
+
+docker compose up
+
+## Script Utility:
+
+cd backend && yarn utility
 
 ## ports
 

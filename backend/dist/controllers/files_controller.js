@@ -91,8 +91,8 @@ exports.processaBlocco = (listaRighe) => __awaiter(void 0, void 0, void 0, funct
         const timestampBlocco = new Date();
         console.log("INIZIO BLOCCO: ", timestampBlocco.getTime());
         yield db.query("BEGIN", []);
-        console.log("wait 5 seconds");
-        yield delay(5000);
+        //console.log("wait 5 seconds");
+        //await delay(5000);
         console.log("doElaborartion START");
         yield doElaborartion(listaRighe, timestampBlocco);
         console.log("doElaborartion END");
