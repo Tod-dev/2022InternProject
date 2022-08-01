@@ -29,5 +29,16 @@ services:
       - db
     volumes:
       - './backend:/src'
+  react-app:
+    build:
+      context: ./frontend
+    depends_on:
+      - nodejs-service
+    volumes:
+      - ./frontend/:/usr/app
+      - /usr/app/node_modules
+    ports:
+      - "3000:3000"
+    command: yarn start
 volumes:
   db:

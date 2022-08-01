@@ -10,7 +10,7 @@ import DefaultEndpoint from "./components/defaultEndpoint";
 
 const App = () => {
   const globalState = {
-    backendService: "http://nodejs-service",
+    backendService: "http://localhost:3001",
   };
 
   return (

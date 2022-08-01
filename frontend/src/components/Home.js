@@ -2,7 +2,7 @@ import React, { useState } from "react";
 
 import StyledLink from "./StyledLink";
 
-import GlobalContext from "./context/globalContext";
+import GlobalContext from "../context/globalContext";
 
 const Home = () => {
   const [fileBase64, setFileBase64] = useState(""); //C:\fakepath\TeseoTech.txt
@@ -43,7 +43,7 @@ const Home = () => {
           <StyledLink to="/data">Processed Data</StyledLink>
         </p>
 
-        <label for="fileBase64">
+        <label htmlFor="fileBase64">
           Importa il file di testo da essere processato:
         </label>
         <input

@@ -39,7 +39,7 @@ exports.getDataProcessed = async (req: any) => {
     let limitQuery: string = limit === "" ? "" : "limit " + limit;
 
     const { rows } = await db.query(
-      `select k,d,timestampDataOra as dataora from datiProcessati  ${fromQuery} order by dataora desc ${limitQuery} `,
+      `select id,k,d,timestampDataOra as dataora from datiProcessati  ${fromQuery} order by dataora desc ${limitQuery} `,
       []
     );
 

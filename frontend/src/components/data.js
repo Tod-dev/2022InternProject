@@ -1,7 +1,7 @@
 import React from "react";
 
 import StyledLink from "./StyledLink";
-import GlobalContext from "./context/globalContext";
+import GlobalContext from "../context/globalContext";
 
 const Data = () => {
   const { backendService } = React.useContext(GlobalContext);
@@ -50,7 +50,7 @@ const Data = () => {
     return () => {
       //cleanup;
     };
-  }, [from, limit]);
+  }, [from, limit, backendService]);
 
   return (
     <div className="App">
@@ -90,7 +90,7 @@ const Data = () => {
             <tbody>
               {data.map((d) => {
                 return (
-                  <tr>
+                  <tr key={d.id}>
                     <td>{d.k}</td>
                     <td>{d.d}</td>
                     <td>{d.dataora}</td>
