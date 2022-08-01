@@ -86,11 +86,20 @@ const insertDati = async (listaRighe: Array<Dato>) => {
   return countRows;
 };
 
+const delay = (ms: number) => new Promise((res) => setTimeout(res, ms));
+
 exports.processaBlocco = async (listaRighe: Array<Dato>) => {
   try {
+    const timestampBlocco: Date = new Date();
+    console.log("INIZIO BLOCCO: ", timestampBlocco.getTime());
     await db.query("BEGIN", []);
 
-    await doElaborartion(listaRighe);
+    //console.log("wait 5 seconds");
+    //await delay(5000);
+
+    console.log("doElaborartion START");
+    await doElaborartion(listaRighe, timestampBlocco);
+    console.log("doElaborartion END");
 
     await db.query("COMMIT", []);
   } catch (e) {
@@ -99,9 +108,9 @@ exports.processaBlocco = async (listaRighe: Array<Dato>) => {
   }
 };
 
-const doElaborartion = async (listaRighe: Array<Dato>) => {
+const doElaborartion = async (listaRighe: Array<Dato>, timestamp: Date) => {
   console.log("start");
-  let current = new Date();
+  let current = timestamp;
   for (let i = 0; i < listaRighe.length; i++) {
     const dato: Dato = listaRighe[i];
 

@@ -18,7 +18,6 @@ const cors = require("cors");
 const dotenv = require("dotenv");
 const cron = require("node-cron");
 const files_controller = require("./controllers/files_controller");
-const index_1 = __importDefault(require("./db/index"));
 const app = (0, express_1.default)();
 dotenv.config();
 app.use(cors());
@@ -65,6 +64,20 @@ app.get("/data", (req, res) => {
         res.status(500).send(error);
     });
 });
+app.get("/test", (req, res) => {
+    let message = "GET test";
+    console.log(message);
+    files_controller
+        .test()
+        .then((response) => {
+        //console.log("RESPONSE:", response);
+        res.status(200).send(response);
+    })
+        .catch((error) => {
+        console.log("ERROR:", error);
+        res.status(500).send(error);
+    });
+});
 const unknownEndpoint = (req, res) => {
     res.status(404).send({ error: "unknown endpoint" });
 };
@@ -75,11 +88,11 @@ var cronjob = cron.schedule("*/10 * * * * *", () => __awaiter(void 0, void 0, vo
 }), {
     scheduled: false,
 });
-app.listen(process.env.PORT || 3001, () => __awaiter(void 0, void 0, void 0, function* () {
-    console.log("started");
-    yield index_1.default.runMigrations();
+app.listen(process.env.PORT || 3001, () => {
+    console.log("serverstarted");
+    console.log("cronjob started");
     cronjob.start();
-}));
+});
 const task = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
         let pendingdata = yield files_controller.getPendingData(15);

@@ -7,7 +7,7 @@
     "dev": "ts-node-dev --poll src/index.ts",
     "build": "rimraf ./dist && tsc",
     "start": "yarn build && node dist/index.js",
-    "utility": "yarn build && ts-node ScriptUtility.js"
+    "utility": "yarn build && ts-node ./dist/script/ScriptUtility.js"
   },
   "keywords": [],
   "author": "",

@@ -8,28 +8,25 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-const path_1 = __importDefault(require("path"));
+//import path from "path";
 const { Pool } = require("pg");
-const postgres_migrations_1 = require("postgres-migrations");
+//import { migrate } from "postgres-migrations";
 class Database {
     constructor() {
-        this.runMigrations = () => __awaiter(this, void 0, void 0, function* () {
-            const client = yield this.pool.connect();
-            try {
-                yield (0, postgres_migrations_1.migrate)({ client }, path_1.default.resolve(__dirname, "migrations/sql"));
-                console.error("migation ok");
-            }
-            catch (err) {
-                console.error("migation failes", err);
-            }
-            finally {
-                client.release();
-            }
-        });
+        /*
+        runMigrations = async (): Promise<void> => {
+          const client = await this.pool.connect();
+          try {
+            await migrate({ client }, path.resolve(__dirname, "migrations/sql"));
+            console.error("migation ok");
+          } catch (err) {
+            console.error("migation failes", err);
+          } finally {
+            client.release();
+          }
+        };
+        */
         this.query = (text, params) => __awaiter(this, void 0, void 0, function* () {
             // invocation timestamp for the query method
             const start = Date.now();
@@ -56,5 +53,4 @@ class Database {
         this.pool = new Pool();
     }
 }
-const db = new Database();
-exports.default = db;
+exports.default = Database;
