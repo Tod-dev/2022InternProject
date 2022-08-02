@@ -5,7 +5,7 @@ services:
     image: postgres
     restart: unless-stopped
     volumes:
-      - db:/var/lib/postgresql/data
+      - ./pgData:/var/lib/postgresql/data
       - ./init-database.sh:/docker-entrypoint-initdb.d/init-database.sh
     environment:
       - POSTGRES_USER=postgres
@@ -40,5 +40,3 @@ services:
     ports:
       - "3000:3000"
     command: yarn start
-volumes:
-  db:
