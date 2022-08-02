@@ -1,5 +1,12 @@
 # Intern Project
 
+### init sql
+
+(controllare che il file sh non sia formattato come file dos)
+vi ./init-database.sh
+:set fileformat=unix
+:wq!
+
 ## start containers:
 
 docker compose up
